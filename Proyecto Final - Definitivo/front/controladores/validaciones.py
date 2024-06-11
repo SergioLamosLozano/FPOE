@@ -14,7 +14,7 @@ class Validaciones():
         return None
     
     def validarValor(valor):
-        patron = re.compile("^[0-9]+$")
+        patron = re.compile("^[0-9. ]+$")
         resultado = patron.match(valor) is not None
         if not resultado:
             return "Solo caracteres validos."

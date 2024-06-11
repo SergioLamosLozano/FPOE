@@ -6,8 +6,7 @@ from tkinter import messagebox
 from vistas.tabla import Tabla
 from tkinter import PhotoImage
 from PIL import Image, ImageTk
-import threading
-import time
+from controladores.hilo import Hilo
 
 
 
@@ -54,24 +53,7 @@ class Interfaz:
         self.label_fondo.config(image=self.fondo)
         self.label_fondo.image = self.fondo  # Evitar que la imagen sea recolectada por el recolector de basura
 
-    '''en esta funcion se crea el hilo, en donde cada 60 segundos va a guardar en 
-    un archivo de texto plano la informacion de las tablas(clientes y servicios)'''
-    def guardar_datos_periodicamente(self):
-        while True:
-            # Obtener datos de clientes y servicios
-            clientes = self.comunicacion.consultar_cliente("", "", "", "", "")
-            servicios = self.comunicacion.consultar_todo("", "", "", "")
-            
-            # Guardar en un archivo
-            with open('datos_clientes_servicios.txt', 'w') as archivo:
-                archivo.write("Clientes:\n")
-                for cliente in clientes:
-                    archivo.write(f"{cliente}\n")
-                archivo.write("Servicios:\n")
-                for servicio in servicios:
-                    archivo.write(f"{servicio}\n")
-        # Esperar un minuto
-            time.sleep(60)
+    
     
     '''aqui se hace la funcion para validar la entrada de los campos, validar que no sean caracteres especiales'''
     def validar_entrada(self, valor, etiqueta_error):
@@ -432,10 +414,12 @@ class Interfaz:
         
         '''aqui se llama la funcion del hilo y se inicializa, tambien se le agrega hilo.daemon = True,
         esto para asegurar que cuando se cierrre o se minimize la interfaz el hilo tambien se cierra'''
-        hilo = threading.Thread(target=self.guardar_datos_periodicamente)
+        hilo = Hilo(self.ventanaPrincipal)
         hilo.daemon = True
         hilo.start()
+        
 
         self.ventanaPrincipal.mainloop()
+        
 
 
